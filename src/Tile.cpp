@@ -4,7 +4,7 @@
 #include "TextureManager.h"
 #include "Util.h"
 
-Tile::Tile()
+Tile::Tile():m_cost(0.0f)
 {
 	setWidth(Config::TILE_SIZE);
 	setHeight(Config::TILE_SIZE);
@@ -24,4 +24,39 @@ void Tile::update()
 
 void Tile::clean()
 {
+}
+
+Tile* Tile::getNeighbourTile(const NeighbourTile position)
+{
+	return m_neighbours[position];
+}
+
+void Tile::setNeighbourTile(const NeighbourTile position, Tile* tile)
+{
+	m_neighbours[position] = tile;
+}
+
+float Tile::getTileCost()
+{
+	return m_cost;
+}
+
+void Tile::setTileCost(float cost)
+{
+	m_cost = cost;
+
+	//TODO: Display cost in label
+}
+
+void Tile::addLabels()
+{
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
+	m_costLabel = new Label("99.9", "Consolas", 12);
+	m_costLabel->getTransform()->position = getTransform()->position + offset;
+	getParent()->addChild(m_costLabel);
+}
+
+void Tile::setLabelsEnabled(bool state)
+{
+	
 }
