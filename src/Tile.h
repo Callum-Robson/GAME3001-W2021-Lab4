@@ -25,7 +25,7 @@ public:
 	void setTileCost(float cost);
 	
 	void addLabels();
-	void setLabelsEnabled(bool state);
+	void setLabelsEnabled(const bool state);
 
 private:
 	float m_cost;
