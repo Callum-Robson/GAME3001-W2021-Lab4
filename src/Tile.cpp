@@ -1,5 +1,6 @@
 #include "Tile.h"
-
+#include <iomanip>
+#include <sstream>
 #include "Config.h"
 #include "TextureManager.h"
 #include "Util.h"
@@ -41,11 +42,15 @@ float Tile::getTileCost()
 	return m_cost;
 }
 
-void Tile::setTileCost(float cost)
+void Tile::setTileCost(const float cost)
 {
 	m_cost = cost;
-
-	m_costLabel->setText(std::to_string(cost));
+	//format string to 1 decimal place
+	std::stringstream stream;
+	stream << std::fixed << std::setprecision(1) << cost;
+	const std::string cost_string = stream.str();
+	
+	m_costLabel->setText(cost_string);
 }
 
 void Tile::addLabels()
@@ -67,4 +72,14 @@ void Tile::setLabelsEnabled(const bool state)
 	m_costLabel->setEnabled(state);
 	m_statusLabel->setEnabled(state);
 
+}
+
+glm::vec2 Tile::getGridPosition() const
+{
+	return m_gridPosition;
+}
+
+void Tile::setGridPosition(float col, float row)
+{
+	m_gridPosition = glm::vec2(col, row);
 }

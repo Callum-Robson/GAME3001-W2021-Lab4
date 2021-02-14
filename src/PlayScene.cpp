@@ -68,13 +68,17 @@ void PlayScene::start()
 	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	m_pTarget = new Target();
 	m_pTarget->getTransform()->position = m_getTile(15, 11)->getTransform()->position + offset;
+	m_pTarget->setGridPosition(15, 11);
 	addChild(m_pTarget);
+	
 	m_computeTileCosts();
 	
 }
 
 void PlayScene::GUI_Function() 
 {
+	//TODO fix offset
+	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	// Always open with a NewFrame
 	ImGui::NewFrame();
 
@@ -90,7 +94,23 @@ void PlayScene::GUI_Function()
 		m_setGridEnabled(isGridEnabled);
 		
 	}
+	ImGui::Separator();
 
+	static int targetPosition[] = { m_pTarget->getGridPosition().x, m_pTarget->getGridPosition().y };
+	if (ImGui::SliderInt2("Target Position", targetPosition, 0, Config::COL_NUM - 1))
+	{
+		//Row adjustment
+		if (targetPosition[1] > Config::ROW_NUM - 1)
+		{
+			targetPosition[1] = Config::ROW_NUM - 1;
+		}
+		SDL_RenderClear(Renderer::Instance()->getRenderer());
+		m_pTarget->getTransform()->position = m_getTile(targetPosition[0], targetPosition[1])->getTransform()->position + offset;
+		m_pTarget->setGridPosition(targetPosition[0], targetPosition[1]);
+		m_computeTileCosts();
+		SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 255, 255, 255);
+		SDL_RenderPresent(Renderer::Instance()->getRenderer());
+	}
 	
 	ImGui::Separator();
 	
@@ -127,6 +147,7 @@ void PlayScene::m_buildGrid()
 		{
 			Tile* tile = new Tile(); // create empty tile
 			tile->getTransform()->position = glm::vec2(col * tileSize, row * tileSize);
+			tile->setGridPosition(col, row);
 			addChild(tile);
 			tile->addLabels();
 			tile->setEnabled(false);
@@ -177,10 +198,9 @@ void PlayScene::m_buildGrid()
 
 void PlayScene::m_computeTileCosts()
 {
-	auto offset = glm::vec2(Config::TILE_SIZE * 0.5f, Config::TILE_SIZE * 0.5f);
 	for (auto tile : m_pGrid)
 	{
-		auto distance = Util::distance(m_pTarget->getTransform()->position, tile->getTransform()->position + offset);
+		auto distance = Util::distance(m_pTarget->getGridPosition(), tile->getGridPosition());
 		tile->setTileCost(distance);
 	}
 }

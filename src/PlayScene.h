@@ -40,6 +40,7 @@ private:
 
 	// convenience functions
 	Tile* m_getTile(int col, int row);
+	
 };
 
 #endif /* defined (__PLAY_SCENE__) */
